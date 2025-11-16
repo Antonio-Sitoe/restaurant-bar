@@ -1,0 +1,41 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./server.ts",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "generate": "drizzle-kit generate --config=drizzle.config.mjs",
+    "migrate": "drizzle-kit migrate --config=drizzle.config.mjs",
+    "studio": "drizzle-kit studio --config=drizzle.config.mjs --port=3005"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^3.0.1",
+    "@libsql/client": "^0.15.15",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^11.7.0",
+    "drizzle-orm": "^0.36.4",
+    "exceljs": "^4.4.0",
+    "fastify": "^4.26.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
+    "pdfkit": "^0.15.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.0.0",
+    "@types/pdfkit": "^0.13.0",
+    "drizzle-kit": "^0.31.7",
+    "tsx": "^4.7.0",
+    "typescript": "^5.2.2"
+  }
+}
