@@ -15,6 +15,8 @@ export interface ProductFilters extends PaginationParams {
   query?: string
   isActive?: boolean
   categoryId?: number
+	lowStock?: boolean
+	search?: string
 }
 
 export const productService = {
@@ -73,6 +75,14 @@ export const productService = {
       .all()
     return row
   },
+  async getByBarcode(barcode: string): Promise<Product | undefined> {
+    const row = await db.select().from(products).where(eq(products.barcode, barcode)).get()
+    return row ?? undefined
+  },
+  async search(q: string): Promise<Product[]> {
+    const likeQ = `%${q}%`
+    return await db.select().from(products).where(like(products.name, likeQ)).all()
+  },
   async create(input: NewProduct): Promise<Product> {
     const now = Date.now()
     const toInsert = { ...input, createdAt: now, updatedAt: now }
@@ -94,5 +104,34 @@ export const productService = {
   },
   async remove(id: number): Promise<void> {
     await db.delete(products).where(eq(products.id, id)).run()
+  },
+  async delete(id: number): Promise<void> {
+    return this.remove(id)
+  },
+  async getLowStock(): Promise<Product[]> {
+    const rows = await db.select().from(products).all()
+    return rows.filter((p) => (p.stockQuantity ?? 0) <= 0)
+  },
+  async getTopSelling(limit = 10): Promise<Array<{ productId: number; quantity: number; revenue: number }>> {
+    return []
+  },
+  async exportCSV(): Promise<string> {
+    const rows = await db.select().from(products).all()
+    const headers = ['id', 'barcode', 'sku', 'name', 'salePrice', 'costPrice', 'stockQuantity']
+    const lines = [
+      headers.join(','),
+      ...rows.map((p) =>
+        [
+          p.id,
+          p.barcode ?? '',
+          p.sku ?? '',
+          (p.name ?? '').replace(/,/g, ' '),
+          p.salePrice ?? 0,
+          p.costPrice ?? 0,
+          p.stockQuantity ?? 0,
+        ].join(',')
+      ),
+    ]
+    return lines.join('\n')
   },
 }

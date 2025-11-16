@@ -213,8 +213,8 @@ export const reportService = {
 
 		for (const product of allProducts) {
 			if (product.trackStock) {
-				totalCostValue += product.costPrice * product.stockQuantity
-				totalSaleValue += product.salePrice * product.stockQuantity
+				totalCostValue += (product.costPrice ?? 0) * (product.stockQuantity ?? 0)
+				totalSaleValue += (product.salePrice ?? 0) * (product.stockQuantity ?? 0)
 			}
 		}
 
@@ -252,13 +252,14 @@ export const reportService = {
 				)
 			const saleIds = salesInPeriod.map((s) => s.id)
 			if (saleIds.length > 0) {
-				query = query.where(sql`${saleItems.saleId} IN (${sql.join(saleIds.map((id) => sql`${id}`), sql`, `)})`)
+				const qAny: any = query
+				query = qAny.where(sql`${saleItems.saleId} IN (${sql.join(saleIds.map((id) => sql`${id}`), sql`, `)})`)
 			}
 		}
 
-		const results = await query
+		const results = await (query as any).all()
 
-		return results.map((item) => ({
+		return results.map((item: any) => ({
 			productId: item.productId || 0,
 			productName: item.productName || 'Unknown',
 			quantity: Number(item.quantity) || 0,

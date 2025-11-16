@@ -15,10 +15,22 @@ import {
   type PaginationParams,
 } from '../utils/pagination'
 
+export type CreateSaleItemInput = {
+  productId: number
+  quantity: number
+  unitPrice: number
+  discountPercent?: number
+  discountAmount?: number
+  taxRate?: number
+}
+
 export interface CreateSaleInput
-  extends Omit<NewSale, 'id' | 'createdAt' | 'completedAt' | 'invoiceNumber'> {
+  extends Omit<
+    NewSale,
+    'id' | 'createdAt' | 'completedAt' | 'invoiceNumber' | 'subtotal' | 'taxAmount' | 'total' | 'changeGiven'
+  > {
   invoiceNumber?: string
-  items: Array<Omit<NewSaleItem, 'id' | 'saleId'>>
+  items: Array<CreateSaleItemInput>
 }
 
 export interface SaleFilters extends PaginationParams {

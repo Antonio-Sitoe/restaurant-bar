@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify'
+import jwt from 'jsonwebtoken'
 import { productRoutes } from './products.routes'
 import { categoryRoutes } from './categories.routes'
 import { customerRoutes } from './customers.routes'
@@ -27,7 +28,7 @@ export async function registerRoutes(fastify: FastifyInstance) {
           const { loginSchema } = await import('../utils/validators')
           const { handleError } = await import('../utils/errors')
           const { logger } = await import('../utils/logger')
-          const jwt = await import('jsonwebtoken')
+          
           const loginAttempts = new Map<
             string,
             { count: number; firstAttempt: number }
@@ -79,14 +80,15 @@ export async function registerRoutes(fastify: FastifyInstance) {
                   },
                 })
             }
-            const token = jwt.default.sign(
+            const secret: jwt.Secret = (process.env.JWT_SECRET || 'dev-secret') as jwt.Secret
+            const token = jwt.sign(
               {
                 id: (user as any).id,
                 username: (user as any).username,
                 role: (user as any).role,
               },
-              process.env.JWT_SECRET || 'dev-secret',
-              { expiresIn: process.env.JWT_EXPIRES_IN || '24h' } // 24 horas por padrão, pode ser configurado via env
+              secret,
+              { expiresIn: (process.env.JWT_EXPIRES_IN || '24h') as any } // 24 horas por padrão, pode ser configurado via env
             )
             return { success: true, data: { user, token } }
           } catch (err: unknown) {

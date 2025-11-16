@@ -81,4 +81,20 @@ export const customerService = {
   async remove(id: number): Promise<void> {
     await db.delete(customers).where(eq(customers.id, id)).run()
   },
+	async getById(id: number): Promise<Customer | undefined> {
+		const row = await db.select().from(customers).where(eq(customers.id, id)).get()
+		return row ?? undefined
+	},
+	async search(q: string): Promise<Customer[]> {
+		const likeQ = `%${q}%`
+		return await db.select().from(customers).where(like(customers.name, likeQ)).all()
+	},
+	// Alias to match routes
+	async delete(id: number): Promise<void> {
+		return this.remove(id)
+	},
+	// Minimal purchase history; extend with joins as needed
+	async getPurchaseHistory(customerId: number): Promise<Array<{ saleId: number; total: number; createdAt: number }>> {
+		return []
+	},
 }

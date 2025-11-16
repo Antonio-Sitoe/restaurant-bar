@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from './auth.middleware'
 import { auditService, type AuditAction } from '../services/audit.service'
 
 export function auditMiddleware(action: AuditAction, tableName?: string) {
-  return async (request: FastifyRequest, reply: FastifyReply) => {
+  return async (request: FastifyRequest, _reply: FastifyReply) => {
     const authRequest = request as AuthenticatedRequest
     if (!authRequest.user) {
       return // Skip audit if not authenticated

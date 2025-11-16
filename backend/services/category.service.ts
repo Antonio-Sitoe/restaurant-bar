@@ -19,6 +19,10 @@ export const categoryService = {
 		}
 		return db.select().from(categories).where(where.length ? and(...where) : undefined).orderBy(asc(categories.displayOrder)).all()
 	},
+	async getById(id: number): Promise<Category | undefined> {
+		const [row] = await db.select().from(categories).where(eq(categories.id, id)).limit(1).all()
+		return row
+	},
 	async create(input: NewCategory): Promise<Category> {
 		const row = await db.insert(categories).values({ ...input, createdAt: Date.now() }).returning().get()
 		return row as Category
@@ -29,6 +33,17 @@ export const categoryService = {
 	},
 	async remove(id: number): Promise<void> {
 		await db.delete(categories).where(eq(categories.id, id)).run()
+	},
+	// Alias to match routes
+	async delete(id: number): Promise<void> {
+		return this.remove(id)
+	},
+	// Reorder categories by array of ids; sets displayOrder based on index
+	async reorder(ids: number[]): Promise<void> {
+		for (let i = 0; i < ids.length; i++) {
+			const id = ids[i]
+			await db.update(categories).set({ displayOrder: i }).where(eq(categories.id, id)).run()
+		}
 	},
 }
 

@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify'
 import { settingService } from '../services/setting.service'
-import { settingSchema } from '../utils/validators'
 import { authMiddleware, requireRole } from '../middleware/auth.middleware'
 import { handleError } from '../utils/errors'
 import { logger } from '../utils/logger'
@@ -48,7 +47,7 @@ export async function settingRoutes(fastify: FastifyInstance) {
       try {
         const { key } = request.params as { key: string }
         const { value } = request.body as { value: unknown }
-        const setting = await settingService.update(key, String(value))
+        const setting = await settingService.update(key, { value: String(value) })
         return { success: true, data: setting }
       } catch (err: unknown) {
         logger.error('Error in PUT /settings/:key', err)

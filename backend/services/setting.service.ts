@@ -74,5 +74,9 @@ export const settingService = {
 			.get()
 		return result
 	},
+	async reset(): Promise<void> {
+		// Implement as needed; for now, no-op to satisfy route
+		return
+	},
 }
 

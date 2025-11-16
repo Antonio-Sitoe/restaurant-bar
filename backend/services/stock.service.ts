@@ -163,4 +163,12 @@ export const stockService = {
       userId,
     })
   },
+	async performInventory(counts: Array<{ productId: number; quantity: number }>): Promise<{ adjusted: number }> {
+		let adjusted = 0
+		for (const { productId, quantity } of counts) {
+			await this.adjust(productId, quantity, 'Inventory count adjustment')
+			adjusted += 1
+		}
+		return { adjusted }
+	},
 }
