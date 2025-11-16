@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Product, CreateProductInput, PaginatedResponse } from '@/types'
+import { Product, CreateProductInput } from '@/types'
 import apiService from '@/services/api.service'
 
 export function useProducts(filters?: { query?: string; categoryId?: number }) {
@@ -8,10 +8,13 @@ export function useProducts(filters?: { query?: string; categoryId?: number }) {
     queryFn: async () => {
       const params = new URLSearchParams()
       if (filters?.query) params.append('q', filters.query)
-      if (filters?.categoryId) params.append('categoryId', filters.categoryId.toString())
-      
+      if (filters?.categoryId)
+        params.append('categoryId', filters.categoryId.toString())
+
       const queryString = params.toString()
-      return apiService.get<Product[]>(`/api/products${queryString ? `?${queryString}` : ''}`)
+      return apiService.get<Product[]>(
+        `/api/products${queryString ? `?${queryString}` : ''}`
+      )
     },
   })
 }
@@ -40,8 +43,13 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<CreateProductInput> }) =>
-      apiService.put<Product>(`/api/products/${id}`, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number
+      data: Partial<CreateProductInput>
+    }) => apiService.put<Product>(`/api/products/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
     },
@@ -66,4 +74,3 @@ export function useProductByBarcode(barcode: string) {
     enabled: !!barcode && barcode.length > 0,
   })
 }
-

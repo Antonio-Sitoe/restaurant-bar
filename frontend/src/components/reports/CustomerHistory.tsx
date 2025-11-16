@@ -79,7 +79,7 @@ export function CustomerHistory({ customer, sales }: CustomerHistoryProps) {
                       {format(new Date(sale.createdAt), 'dd/MM/yyyy HH:mm')}
                     </TableCell>
                     <TableCell className="font-medium">{sale.invoiceNumber}</TableCell>
-                    <TableCell>{sale.items.length}</TableCell>
+                    <TableCell>{sale.items?.length || 0}</TableCell>
                     <TableCell className="font-semibold">{sale.total.toFixed(2)} MT</TableCell>
                     <TableCell>
                       <Badge variant="secondary" className="uppercase">

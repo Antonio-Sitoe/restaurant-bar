@@ -6,7 +6,7 @@ import * as schema from './schema/index.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const defaultDbPath = path.join(
-  process.env.APP_ROOT ?? path.join(__dirname, '../..'),
+  process.env.APP_ROOT ?? path.join(__dirname, '../'),
   'app.db'
 )
 const dbPath = process.env.DB_PATH || defaultDbPath

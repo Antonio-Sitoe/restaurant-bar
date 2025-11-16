@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from './ThemeToggle'
 import { TitleBar } from './TitleBar'
+import { MenuBar } from './MenuBar'
 import { ShoppingCart, Package, Users, BarChart3, Settings, LogOut, Home, Folder, Database } from 'lucide-react'
 
 interface MainLayoutProps {
@@ -36,6 +37,9 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Title Bar (Electron) */}
       <TitleBar />
+      
+      {/* Menu Bar */}
+      <MenuBar />
       
       {/* Header */}
       <header className="bg-white border-b border-gray-200 shadow-sm">

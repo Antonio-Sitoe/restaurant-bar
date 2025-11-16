@@ -10,7 +10,6 @@ import { ProductGrid } from '@/components/pos/ProductGrid'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Search, ShoppingCart, Plus, Minus, X, User } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Customer } from '@/types'
@@ -30,15 +29,24 @@ function POSPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [barcode, setBarcode] = useState('')
   const [cart, setCart] = useState<CartItem[]>([])
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  )
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>()
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    number | undefined
+  >()
 
   const { data: products } = useProducts({ query: searchQuery || undefined })
   const { data: allProducts } = useProducts()
   const { data: categories } = useCategories()
   const { data: productByBarcode } = useProductByBarcode(barcode)
   const createSale = useCreateSale()
+
+  // Criar um mapa de produtos para acesso rápido
+  const productsMap = new Map(
+    (allProducts?.data || []).map((p) => [p.id, p])
+  )
 
   // Adicionar produto ao carrinho
   const addToCart = (product: any, quantity: number = 1) => {
@@ -84,7 +92,10 @@ function POSPage() {
   }
 
   // Calcular totais
-  const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.unitPrice * item.quantity,
+    0
+  )
   const tax = subtotal * 0.17 // 17% IVA
   const total = subtotal + tax
 
@@ -98,14 +109,20 @@ function POSPage() {
     }
 
     try {
-      await createSale.mutateAsync({
-        customerId: selectedCustomer?.id || undefined,
-        items: cart.map((item) => ({
+      // Preparar items apenas com os campos que o validador aceita
+      const itemsToSend = cart.map((item) => {
+        return {
           productId: item.productId,
-          productName: item.productName,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
-        })),
+          discountPercent: 0,
+          discountAmount: 0,
+        }
+      })
+
+      await createSale.mutateAsync({
+        customerId: selectedCustomer?.id || undefined,
+        items: itemsToSend,
         paymentMethod: paymentData.method,
         cashReceived: paymentData.cashReceived,
         discountAmount: 0,
@@ -119,6 +136,7 @@ function POSPage() {
       setIsPaymentModalOpen(false)
     } catch (error) {
       console.error('Error creating sale:', error)
+      toast.error('Erro ao processar venda. Tente novamente.')
     }
   }
 
@@ -130,7 +148,9 @@ function POSPage() {
   // Quando produto é encontrado por código de barras
   useEffect(() => {
     if (productByBarcode && barcode && barcode.length >= 3) {
-      const existing = cart.find((item) => item.productId === productByBarcode.id)
+      const existing = cart.find(
+        (item) => item.productId === productByBarcode.id
+      )
       if (!existing) {
         addToCart(productByBarcode, 1)
       }
@@ -145,8 +165,12 @@ function POSPage() {
         {/* Área de Produtos */}
         <div className="lg:col-span-2 space-y-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Ponto de Venda</h1>
-            <p className="text-gray-600">Busque e adicione produtos ao carrinho</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Ponto de Venda
+            </h1>
+            <p className="text-gray-600">
+              Busque e adicione produtos ao carrinho
+            </p>
           </div>
 
           {/* Busca e Seleção de Cliente */}
@@ -156,7 +180,10 @@ function POSPage() {
                 <div>
                   <label className="text-sm font-medium mb-2 block flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    Cliente <span className="text-xs text-gray-500 font-normal">(opcional - pode vender sem cliente)</span>
+                    Cliente{' '}
+                    <span className="text-xs text-gray-500 font-normal">
+                      (opcional - pode vender sem cliente)
+                    </span>
                   </label>
                   <CustomerSelector
                     selectedCustomer={selectedCustomer}
@@ -189,7 +216,9 @@ function POSPage() {
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-2">
                   <Button
-                    variant={selectedCategoryId === undefined ? 'default' : 'outline'}
+                    variant={
+                      selectedCategoryId === undefined ? 'default' : 'outline'
+                    }
                     size="sm"
                     onClick={() => setSelectedCategoryId(undefined)}
                   >
@@ -198,7 +227,11 @@ function POSPage() {
                   {categories.map((category) => (
                     <Button
                       key={category.id}
-                      variant={selectedCategoryId === category.id ? 'default' : 'outline'}
+                      variant={
+                        selectedCategoryId === category.id
+                          ? 'default'
+                          : 'outline'
+                      }
                       size="sm"
                       onClick={() => setSelectedCategoryId(category.id)}
                     >
@@ -263,7 +296,9 @@ function POSPage() {
               {/* Itens do Carrinho */}
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {cart.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Carrinho vazio</p>
+                  <p className="text-center text-gray-500 py-8">
+                    Carrinho vazio
+                  </p>
                 ) : (
                   cart.map((item) => (
                     <div
@@ -271,7 +306,9 @@ function POSPage() {
                       className="flex items-center justify-between p-3 border rounded-lg"
                     >
                       <div className="flex-1">
-                        <div className="font-medium text-sm">{item.productName}</div>
+                        <div className="font-medium text-sm">
+                          {item.productName}
+                        </div>
                         <div className="text-xs text-gray-500">
                           {item.unitPrice.toFixed(2)} MT x {item.quantity}
                         </div>
@@ -282,7 +319,9 @@ function POSPage() {
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6"
-                            onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                            onClick={() =>
+                              updateQuantity(item.productId, item.quantity - 1)
+                            }
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -291,7 +330,9 @@ function POSPage() {
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6"
-                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                            onClick={() =>
+                              updateQuantity(item.productId, item.quantity + 1)
+                            }
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -354,4 +395,3 @@ function POSPage() {
     </MainLayout>
   )
 }
-

@@ -12,7 +12,12 @@ export function useSales(filters?: { startDate?: string; endDate?: string; statu
       if (filters?.status) params.append('status', filters.status)
 
       const queryString = params.toString()
-      return apiService.get<Sale[]>(`/api/sales${queryString ? `?${queryString}` : ''}`)
+      const result = await apiService.get<Sale[]>(`/api/sales${queryString ? `?${queryString}` : ''}`)
+      // Garantir que sempre retornamos um array e que cada sale tem items
+      return Array.isArray(result) ? result.map(sale => ({
+        ...sale,
+        items: sale.items || []
+      })) : []
     },
   })
 }

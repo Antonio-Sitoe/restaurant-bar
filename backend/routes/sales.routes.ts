@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { saleService } from '../services/sale.service.js'
 import { createSaleSchema } from '../utils/validators.js'
-import { authMiddleware } from '../middleware/auth.middleware.js'
+import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.middleware.js'
 import { handleError } from '../utils/errors.js'
 import { logger } from '../utils/logger.js'
 
@@ -9,7 +9,13 @@ export async function saleRoutes(fastify: FastifyInstance) {
 	fastify.post('/', { preHandler: authMiddleware }, async (request, reply) => {
 		try {
 			const body = createSaleSchema.parse(request.body)
-			const result = await saleService.create(body)
+			const authRequest = request as AuthenticatedRequest
+			const userId = authRequest.user?.id
+			
+			// Adicionar userId ao body se disponível
+			const saleData = { ...body, userId }
+			
+			const result = await saleService.create(saleData)
 			return reply.status(201).send({ success: true, data: result })
 		} catch (err: unknown) {
 			logger.error('Error in POST /sales', err)

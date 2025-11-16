@@ -32,12 +32,14 @@ function HomePage() {
   const salesArray = Array.isArray(sales) ? sales : []
   const todaySales = salesArray.length || 0
   const todayRevenue =
-    dailySummary?.totalSales ||
+    (dailySummary && typeof dailySummary === 'object' && 'totalSales' in dailySummary
+      ? (dailySummary as { totalSales?: number }).totalSales
+      : undefined) ||
     (salesArray.length > 0
       ? salesArray.reduce((sum: number, sale: Sale) => sum + sale.total, 0)
       : 0)
   const lowStockProducts =
-    products?.filter((p: Product) => p.stockQuantity <= p.minStock).length || 0
+    (products || []).filter((p: Product) => p.stockQuantity <= p.minStock).length
 
   const stats = [
     {
@@ -152,7 +154,7 @@ function HomePage() {
                         {sale.total.toFixed(2)} MT
                       </p>
                       <p className="text-xs text-gray-500">
-                        {sale.items.length} itens
+                        {sale.items?.length || 0} itens
                       </p>
                     </div>
                   </div>

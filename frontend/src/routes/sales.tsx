@@ -73,7 +73,7 @@ function SaleDetailModal({ sale, isOpen, onClose }: { sale: Sale | null; isOpen:
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sale.items.map((item) => (
+                {(sale.items || []).map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.productName}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
@@ -135,8 +135,8 @@ function SalesPage() {
     const query = searchQuery.toLowerCase()
     return (
       sale.invoiceNumber.toLowerCase().includes(query) ||
-      sale.customer?.name.toLowerCase().includes(query) ||
-      sale.items.some((item) => item.productName.toLowerCase().includes(query))
+      sale.customer?.name?.toLowerCase().includes(query) ||
+      (sale.items && Array.isArray(sale.items) && sale.items.some((item) => item.productName?.toLowerCase().includes(query)))
     )
   })
 
@@ -235,7 +235,7 @@ function SalesPage() {
                       </TableCell>
                       <TableCell>{sale.customer?.name || 'Cliente não identificado'}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{sale.items.length} itens</Badge>
+                        <Badge variant="secondary">{(sale.items?.length || 0)} itens</Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">{paymentMethodLabels[sale.paymentMethod]}</Badge>

@@ -9,7 +9,21 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+} from 'recharts'
 import { Download, Calendar } from 'lucide-react'
 import { format, subDays } from 'date-fns'
 import toast from 'react-hot-toast'
@@ -29,12 +43,17 @@ function ReportsPage() {
   const [endDate, setEndDate] = useState(today)
 
   const { data: salesByPeriod } = useSalesByPeriod(startDate, endDate)
-  const { data: salesByPayment } = useSalesByPaymentMethod({ startDate, endDate })
+  const { data: salesByPayment } = useSalesByPaymentMethod({
+    startDate,
+    endDate,
+  })
   const { data: topProducts } = useTopProducts(10, { startDate, endDate })
 
   const handleExportPDF = async () => {
     try {
-      const response = await fetch(`/api/reports/export/pdf?startDate=${startDate}&endDate=${endDate}`)
+      const response = await fetch(
+        `/api/reports/export/pdf?startDate=${startDate}&endDate=${endDate}`
+      )
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -50,7 +69,9 @@ function ReportsPage() {
 
   const handleExportExcel = async () => {
     try {
-      const response = await fetch(`/api/reports/export/excel?startDate=${startDate}&endDate=${endDate}`)
+      const response = await fetch(
+        `/api/reports/export/excel?startDate=${startDate}&endDate=${endDate}`
+      )
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -66,16 +87,24 @@ function ReportsPage() {
 
   const paymentMethodData = salesByPayment
     ? Object.entries(salesByPayment).map(([method, value]) => ({
-        name: method === 'cash' ? 'Dinheiro' : method === 'card' ? 'Cartão' : method === 'mpesa' ? 'M-Pesa' : 'E-Mola',
+        name:
+          method === 'cash'
+            ? 'Dinheiro'
+            : method === 'card'
+              ? 'Cartão'
+              : method === 'mpesa'
+                ? 'M-Pesa'
+                : 'E-Mola',
         value: Number(value),
       }))
     : []
 
-  const topProductsData = topProducts?.map((p: any) => ({
-    name: p.name?.substring(0, 20) || 'Produto',
-    quantidade: p.totalQuantity || 0,
-    receita: p.totalRevenue || 0,
-  })) || []
+  const topProductsData =
+    topProducts?.map((p: Product) => ({
+      name: p.name?.substring(0, 20) || 'Produto',
+      quantidade: p.totalQuantity || 0,
+      receita: p.totalRevenue || 0,
+    })) || []
 
   return (
     <MainLayout>
@@ -84,7 +113,9 @@ function ReportsPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Relatórios</h1>
-            <p className="text-gray-600 mt-1">Análise de vendas e performance</p>
+            <p className="text-gray-600 mt-1">
+              Análise de vendas e performance
+            </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleExportPDF}>
@@ -120,16 +151,24 @@ function ReportsPage() {
                 className="w-40"
               />
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => {
-                  setStartDate(lastWeek)
-                  setEndDate(today)
-                }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(lastWeek)
+                    setEndDate(today)
+                  }}
+                >
                   Última Semana
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => {
-                  setStartDate(lastMonth)
-                  setEndDate(today)
-                }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(lastMonth)
+                    setEndDate(today)
+                  }}
+                >
                   Último Mês
                 </Button>
               </div>
@@ -151,8 +190,18 @@ function ReportsPage() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total (MT)" />
-                  <Line type="monotone" dataKey="count" stroke="#82ca9d" name="Quantidade" />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#8884d8"
+                    name="Total (MT)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#82ca9d"
+                    name="Quantidade"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -173,13 +222,18 @@ function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name} ${(percent * 100).toFixed(0)}%`
+                    }
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
                   >
                     {paymentMethodData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -199,11 +253,20 @@ function ReportsPage() {
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={topProductsData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
+                  <XAxis
+                    dataKey="name"
+                    angle={-45}
+                    textAnchor="end"
+                    height={100}
+                  />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="quantidade" fill="#8884d8" name="Quantidade Vendida" />
+                  <Bar
+                    dataKey="quantidade"
+                    fill="#8884d8"
+                    name="Quantidade Vendida"
+                  />
                   <Bar dataKey="receita" fill="#82ca9d" name="Receita (MT)" />
                 </BarChart>
               </ResponsiveContainer>

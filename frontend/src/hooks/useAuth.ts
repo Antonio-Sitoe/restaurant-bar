@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { User, AuthResponse, LoginCredentials } from '@/types'
 import apiService from '@/services/api.service'
 
@@ -24,7 +24,10 @@ export function useAuth() {
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
-      const response = await apiService.post<AuthResponse>('/api/auth/login', credentials)
+      const response = await apiService.post<AuthResponse>(
+        '/api/auth/login',
+        credentials
+      )
       localStorage.setItem('auth_token', response.token)
       localStorage.setItem('user', JSON.stringify(response.user))
       return response
@@ -50,4 +53,3 @@ export function useAuth() {
     isLoading: loginMutation.isPending,
   }
 }
-
