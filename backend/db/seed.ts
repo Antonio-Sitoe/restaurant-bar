@@ -4,7 +4,7 @@ import { db } from './connection'
 import { users } from './schema/users.schema'
 import { settings } from './schema/settings.schema'
 import { categories } from './schema/categories.schema'
-import { createViews } from './views.js'
+import { createViews } from './views'
 
 export async function seedDatabase() {
   // Check if admin user already exists (by email or username)

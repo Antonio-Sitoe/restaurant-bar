@@ -1,5 +1,5 @@
-import { client } from './connection.js'
-import { logger } from '../utils/logger.js'
+import { client } from './connection'
+import { logger } from '../utils/logger'
 
 export async function createViews() {
   try {

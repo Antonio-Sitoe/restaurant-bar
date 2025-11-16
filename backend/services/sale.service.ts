@@ -13,7 +13,7 @@ import {
   normalizePagination,
   type PaginatedResult,
   type PaginationParams,
-} from '../utils/pagination.js'
+} from '../utils/pagination'
 
 export interface CreateSaleInput
   extends Omit<NewSale, 'id' | 'createdAt' | 'completedAt' | 'invoiceNumber'> {

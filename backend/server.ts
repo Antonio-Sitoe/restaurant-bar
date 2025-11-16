@@ -3,10 +3,10 @@ import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
-import { registerRoutes } from './routes/index.js'
-import { errorHandler } from './middleware/error.middleware.js'
-import { logger } from './utils/logger.js'
-import { seedDatabase } from './db/seed.js'
+import { registerRoutes } from './routes/index'
+import { errorHandler } from './middleware/error.middleware'
+import { logger } from './utils/logger'
+import { seedDatabase } from './db/seed'
 
 const PORT = Number(process.env.PORT) || 3000
 const HOST = process.env.HOST || '127.0.0.1'
@@ -88,7 +88,7 @@ async function start() {
   try {
     // Seed database on startup
     await seedDatabase()
-    
+
     const server = await buildServer()
     await server.listen({ port: PORT, host: HOST })
     logger.info(`Server listening on http://${HOST}:${PORT}`)
