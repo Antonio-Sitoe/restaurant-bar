@@ -27,7 +27,7 @@
     "./utils/**/*",
     "./types/**/*",
     "./server.ts",
-    "drizzle.config.ts"
+    "drizzle.config.mts"
   ],
   "exclude": [
     "node_modules",

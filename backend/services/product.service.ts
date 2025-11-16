@@ -1,5 +1,5 @@
 import { and, eq, like, sql } from 'drizzle-orm'
-import { getDb } from '../db/connection'
+import { db } from '../db/connection'
 import { products, type Product, type NewProduct } from '../db/schema/products.schema'
 import { normalizePagination, type PaginatedResult, type PaginationParams } from '../utils/pagination.js'
 
@@ -11,7 +11,6 @@ export interface ProductFilters extends PaginationParams {
 
 export const productService = {
 	async getAll(filters?: ProductFilters): Promise<PaginatedResult<Product>> {
-		const db = getDb()
 		const where = []
 		if (filters?.query) {
 			const q = `%${filters.query}%`
@@ -58,19 +57,16 @@ export const productService = {
 		}
 	},
 	async getById(id: number): Promise<Product | undefined> {
-		const db = getDb()
 		const [row] = await db.select().from(products).where(eq(products.id, id)).limit(1).all()
 		return row
 	},
 	async create(input: NewProduct): Promise<Product> {
-		const db = getDb()
 		const now = Date.now()
 		const toInsert = { ...input, createdAt: now, updatedAt: now }
 		const inserted = await db.insert(products).values(toInsert).returning().get()
 		return inserted as Product
 	},
 	async update(id: number, input: Partial<NewProduct>): Promise<Product> {
-		const db = getDb()
 		const updated = await db
 			.update(products)
 			.set({ ...input, updatedAt: Date.now() })
@@ -80,7 +76,6 @@ export const productService = {
 		return updated as Product
 	},
 	async remove(id: number): Promise<void> {
-		const db = getDb()
 		await db.delete(products).where(eq(products.id, id)).run()
 	},
 }

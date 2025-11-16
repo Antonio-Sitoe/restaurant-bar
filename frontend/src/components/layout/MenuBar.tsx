@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 interface MenuItem {
-  label: string
+  label?: string
   icon?: React.ComponentType<{ className?: string }>
   action?: () => void
   shortcut?: string
@@ -289,16 +289,16 @@ export function MenuBar() {
 
                   return (
                     <button
-                      key={item.label}
+                      key={item.label || `item-${index}`}
                       onClick={() => handleMenuItemClick(item)}
-                      className="w-full flex items-center gap-3 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors text-left"
+                      className="w-full flex items-center gap-3 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-gray-700 transition-colors text-left"
                     >
                       {Icon ? (
-                        <Icon className="h-4 w-4 flex-shrink-0" />
+                        <Icon className="h-4 w-4 shrink-0" />
                       ) : (
                         <span className="w-4" />
                       )}
-                      <span className="flex-1">{item.label}</span>
+                      <span className="flex-1">{item.label || ''}</span>
                       {item.shortcut && (
                         <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">
                           {item.shortcut}

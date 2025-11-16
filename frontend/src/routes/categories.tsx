@@ -173,7 +173,7 @@ function CategoriesPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -247,7 +247,7 @@ function CategoriesPage() {
                     .map((category: Category) => (
                       <TableRow key={category.id}>
                         <TableCell className="font-medium flex items-center gap-2">
-                          <FolderOpen className="h-4 w-4 text-blue-500" />
+                          <FolderOpen className="h-4 w-4 text-purple-500" />
                           {category.name}
                         </TableCell>
                         <TableCell className="text-gray-600">

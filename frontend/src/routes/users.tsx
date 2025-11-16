@@ -343,7 +343,7 @@ function UsersPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -389,7 +389,7 @@ function UsersPage() {
                   {users.map((user: User) => (
                     <TableRow key={user.id}>
                       <TableCell className="font-medium flex items-center gap-2">
-                        <Shield className="h-4 w-4 text-blue-500" />
+                        <Shield className="h-4 w-4 text-purple-500" />
                         {user.username}
                       </TableCell>
                       <TableCell>{user.fullName || '-'}</TableCell>

@@ -1,12 +1,10 @@
-import { getSqlite } from './connection.js'
+import { client } from './connection.js'
 import { logger } from '../utils/logger.js'
 
 export async function createViews() {
-	const sqlite = getSqlite()
-
-	try {
-		// View: low_stock_products
-		sqlite.exec(`
+  try {
+    // View: low_stock_products
+    await client.execute(`
 			CREATE VIEW IF NOT EXISTS low_stock_products AS
 			SELECT 
 				p.id,
@@ -28,8 +26,8 @@ export async function createViews() {
 				AND p.is_active = 1
 		`)
 
-		// View: daily_sales_summary
-		sqlite.exec(`
+    // View: daily_sales_summary
+    await client.execute(`
 			CREATE VIEW IF NOT EXISTS daily_sales_summary AS
 			SELECT 
 				DATE(s.created_at / 1000, 'unixepoch') as sale_date,
@@ -45,8 +43,8 @@ export async function createViews() {
 			GROUP BY DATE(s.created_at / 1000, 'unixepoch')
 		`)
 
-		// View: top_selling_products
-		sqlite.exec(`
+    // View: top_selling_products
+    await client.execute(`
 			CREATE VIEW IF NOT EXISTS top_selling_products AS
 			SELECT 
 				si.product_id,
@@ -64,8 +62,8 @@ export async function createViews() {
 			ORDER BY total_quantity_sold DESC
 		`)
 
-		// View: stock_value
-		sqlite.exec(`
+    // View: stock_value
+    await client.execute(`
 			CREATE VIEW IF NOT EXISTS stock_value AS
 			SELECT 
 				c.id as category_id,
@@ -81,10 +79,9 @@ export async function createViews() {
 			GROUP BY c.id, c.name
 		`)
 
-		logger.info('✅ Database views created successfully')
-	} catch (error) {
-		logger.error('Error creating views', error)
-		throw error
-	}
+    logger.info('✅ Database views created successfully')
+  } catch (error) {
+    logger.error('Error creating views', error)
+    throw error
+  }
 }
-

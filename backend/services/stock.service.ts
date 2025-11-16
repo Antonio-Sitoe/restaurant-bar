@@ -1,5 +1,5 @@
 import { eq, desc, sql, and } from 'drizzle-orm'
-import { getDb } from '../db/connection'
+import { db } from '../db/connection'
 import { products } from '../db/schema/products.schema'
 import { stockMovements, type StockMovement, type NewStockMovement } from '../db/schema/stock_movements.schema'
 import { normalizePagination, type PaginatedResult, type PaginationParams } from '../utils/pagination.js'
@@ -17,7 +17,6 @@ export interface StockMovementInput {
 
 export const stockService = {
 	async addMovement(input: StockMovementInput): Promise<StockMovement> {
-		const db = getDb()
 		const product = await db.select().from(products).where(eq(products.id, input.productId)).get()
 
 		if (!product) {
@@ -62,7 +61,6 @@ export const stockService = {
 	},
 
 	async getHistory(productId?: number, limit?: number, page?: number): Promise<PaginatedResult<StockMovement>> {
-		const db = getDb()
 		const where = productId ? [eq(stockMovements.productId, productId)] : []
 		const whereClause = where.length ? and(...where) : undefined
 
@@ -101,13 +99,11 @@ export const stockService = {
 	},
 
 	async getCurrentStock(productId: number): Promise<number> {
-		const db = getDb()
 		const product = await db.select().from(products).where(eq(products.id, productId)).get()
 		return product?.stockQuantity ?? 0
 	},
 
 	async adjust(productId: number, newQuantity: number, notes?: string, userId?: number): Promise<StockMovement> {
-		const db = getDb()
 		const product = await db.select().from(products).where(eq(products.id, productId)).get()
 
 		if (!product) {

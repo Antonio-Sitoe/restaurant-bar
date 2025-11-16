@@ -13,10 +13,31 @@ import { CustomerHistory } from '@/components/reports/CustomerHistory'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog'
-import { Plus, Search, Edit, Trash2, User, ShoppingBag, History } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog'
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  User,
+  ShoppingBag,
+  History,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -69,15 +90,28 @@ function CustomerForm({
       <div className="space-y-4">
         <div>
           <label className="text-sm font-medium">Nome *</label>
-          <Input {...register('name')} className={errors.name ? 'border-red-500' : ''} />
-          {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
+          <Input
+            {...register('name')}
+            className={errors.name ? 'border-red-500' : ''}
+          />
+          {errors.name && (
+            <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium">Email</label>
-            <Input type="email" {...register('email')} className={errors.email ? 'border-red-500' : ''} />
-            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+            <Input
+              type="email"
+              {...register('email')}
+              className={errors.email ? 'border-red-500' : ''}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -89,7 +123,10 @@ function CustomerForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium">NUIT</label>
-            <Input {...register('nuit')} placeholder="Número de identificação fiscal" />
+            <Input
+              {...register('nuit')}
+              placeholder="Número de identificação fiscal"
+            />
           </div>
 
           <div>
@@ -154,7 +191,10 @@ function CustomersPage() {
       }
 
       if (editingCustomer) {
-        await updateCustomer.mutateAsync({ id: editingCustomer.id, data: submitData })
+        await updateCustomer.mutateAsync({
+          id: editingCustomer.id,
+          data: submitData,
+        })
         toast.success('Cliente atualizado com sucesso!')
       } else {
         await createCustomer.mutateAsync(submitData)
@@ -169,7 +209,7 @@ function CustomersPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -214,7 +254,9 @@ function CustomersPage() {
               <div className="text-center py-8">
                 <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500">
-                  {searchQuery ? 'Nenhum cliente encontrado' : 'Nenhum cliente cadastrado'}
+                  {searchQuery
+                    ? 'Nenhum cliente encontrado'
+                    : 'Nenhum cliente cadastrado'}
                 </p>
               </div>
             ) : (
@@ -233,14 +275,20 @@ function CustomersPage() {
                   {customers.map((customer) => (
                     <TableRow key={customer.id}>
                       <TableCell className="font-medium flex items-center gap-2">
-                        <User className="h-4 w-4 text-blue-500" />
+                        <User className="h-4 w-4 text-purple-500" />
                         {customer.name}
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
                           {customer.email && <div>{customer.email}</div>}
-                          {customer.phone && <div className="text-gray-500">{customer.phone}</div>}
-                          {!customer.email && !customer.phone && <span className="text-gray-400">-</span>}
+                          {customer.phone && (
+                            <div className="text-gray-500">
+                              {customer.phone}
+                            </div>
+                          )}
+                          {!customer.email && !customer.phone && (
+                            <span className="text-gray-400">-</span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>{customer.nuit || '-'}</TableCell>
@@ -263,7 +311,11 @@ function CustomersPage() {
                           >
                             <History className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(customer)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(customer)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
@@ -287,7 +339,9 @@ function CustomersPage() {
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{editingCustomer ? 'Editar Cliente' : 'Novo Cliente'}</DialogTitle>
+              <DialogTitle>
+                {editingCustomer ? 'Editar Cliente' : 'Novo Cliente'}
+              </DialogTitle>
               <DialogClose onClose={() => setIsFormOpen(false)} />
             </DialogHeader>
             <CustomerForm
@@ -304,13 +358,21 @@ function CustomersPage() {
 
         {/* Dialog de Histórico */}
         {viewingCustomer && (
-          <Dialog open={!!viewingCustomer} onOpenChange={() => setViewingCustomer(null)}>
+          <Dialog
+            open={!!viewingCustomer}
+            onOpenChange={() => setViewingCustomer(null)}
+          >
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Histórico de Compras - {viewingCustomer.name}</DialogTitle>
+                <DialogTitle>
+                  Histórico de Compras - {viewingCustomer.name}
+                </DialogTitle>
                 <DialogClose onClose={() => setViewingCustomer(null)} />
               </DialogHeader>
-              <CustomerHistory customer={viewingCustomer} sales={customerSales || []} />
+              <CustomerHistory
+                customer={viewingCustomer}
+                sales={customerSales || []}
+              />
             </DialogContent>
           </Dialog>
         )}

@@ -1,5 +1,5 @@
 import { and, eq, gte, lte, sql, sum } from 'drizzle-orm'
-import { getDb } from '../db/connection'
+import { db } from '../db/connection'
 import { sales, saleItems } from '../db/schema/sales.schema'
 import { products } from '../db/schema/products.schema'
 import { categories } from '../db/schema/categories.schema'
@@ -12,7 +12,6 @@ import type {
 
 export const reportService = {
 	async salesByPeriod(startDate: number, endDate: number): Promise<SalesByPeriodReport> {
-		const db = getDb()
 
 		// Get sales in period
 		const salesInPeriod = await db
@@ -64,7 +63,6 @@ export const reportService = {
 	},
 
 	async salesByProduct(startDate: number, endDate: number): Promise<SalesByProductReport> {
-		const db = getDb()
 
 		const salesInPeriod = await db
 			.select({ id: sales.id })
@@ -101,7 +99,6 @@ export const reportService = {
 	},
 
 	async salesByCategory(startDate: number, endDate: number): Promise<SalesByCategoryReport> {
-		const db = getDb()
 
 		const salesInPeriod = await db
 			.select({ id: sales.id, total: sales.total })
@@ -149,7 +146,6 @@ export const reportService = {
 	},
 
 	async salesByPaymentMethod(startDate: number, endDate: number) {
-		const db = getDb()
 
 		const salesInPeriod = await db
 			.select({
@@ -177,7 +173,6 @@ export const reportService = {
 	},
 
 	async profitAnalysis(startDate: number, endDate: number): Promise<ProfitAnalysisReport> {
-		const db = getDb()
 
 		const salesInPeriod = await db
 			.select()
@@ -211,7 +206,6 @@ export const reportService = {
 	},
 
 	async stockValue() {
-		const db = getDb()
 		const allProducts = await db.select().from(products).where(eq(products.isActive, true))
 
 		let totalCostValue = 0
@@ -232,7 +226,6 @@ export const reportService = {
 	},
 
 	async topProducts(limit: number = 10, startDate?: number, endDate?: number) {
-		const db = getDb()
 
 		let query = db
 			.select({

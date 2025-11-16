@@ -29,7 +29,7 @@ export function CustomerHistory({ customer, sales }: CustomerHistoryProps) {
           <CardContent className="pt-6">
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-1">Total de Compras</p>
-              <p className="text-3xl font-bold text-blue-600">{customer.totalOrders}</p>
+              <p className="text-3xl font-bold text-purple-600">{customer.totalOrders}</p>
             </div>
           </CardContent>
         </Card>

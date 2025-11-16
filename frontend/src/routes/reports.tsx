@@ -27,6 +27,7 @@ import {
 import { Download, Calendar } from 'lucide-react'
 import { format, subDays } from 'date-fns'
 import toast from 'react-hot-toast'
+import { Product } from 'electron'
 
 export const Route = createFileRoute('/reports')({
   component: ReportsPage,
@@ -108,7 +109,7 @@ function ReportsPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>

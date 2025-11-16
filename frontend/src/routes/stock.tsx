@@ -237,7 +237,7 @@ function StockPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>

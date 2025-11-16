@@ -6,9 +6,22 @@ import { Sale } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog'
 import { Search, Receipt, X, Eye, Calendar, Printer } from 'lucide-react'
 import { ReceiptPreview } from '@/components/reports/ReceiptPreview'
 import toast from 'react-hot-toast'
@@ -18,7 +31,15 @@ export const Route = createFileRoute('/sales')({
   component: SalesPage,
 })
 
-function SaleDetailModal({ sale, isOpen, onClose }: { sale: Sale | null; isOpen: boolean; onClose: () => void }) {
+function SaleDetailModal({
+  sale,
+  isOpen,
+  onClose,
+}: {
+  sale: Sale | null
+  isOpen: boolean
+  onClose: () => void
+}) {
   if (!sale) return null
 
   const paymentMethodLabels = {
@@ -45,7 +66,9 @@ function SaleDetailModal({ sale, isOpen, onClose }: { sale: Sale | null; isOpen:
             </div>
             <div>
               <p className="text-sm text-gray-500">Método de Pagamento</p>
-              <p className="font-medium">{paymentMethodLabels[sale.paymentMethod]}</p>
+              <p className="font-medium">
+                {paymentMethodLabels[sale.paymentMethod]}
+              </p>
             </div>
             {sale.customer && (
               <div>
@@ -55,7 +78,11 @@ function SaleDetailModal({ sale, isOpen, onClose }: { sale: Sale | null; isOpen:
             )}
             <div>
               <p className="text-sm text-gray-500">Status</p>
-              <Badge variant={sale.status === 'completed' ? 'success' : 'destructive'}>
+              <Badge
+                variant={
+                  sale.status === 'completed' ? 'success' : 'destructive'
+                }
+              >
                 {sale.status === 'completed' ? 'Concluída' : 'Cancelada'}
               </Badge>
             </div>
@@ -78,7 +105,9 @@ function SaleDetailModal({ sale, isOpen, onClose }: { sale: Sale | null; isOpen:
                     <TableCell>{item.productName}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
                     <TableCell>{item.unitPrice.toFixed(2)} MT</TableCell>
-                    <TableCell className="text-right">{item.total.toFixed(2)} MT</TableCell>
+                    <TableCell className="text-right">
+                      {item.total.toFixed(2)} MT
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -136,7 +165,11 @@ function SalesPage() {
     return (
       sale.invoiceNumber.toLowerCase().includes(query) ||
       sale.customer?.name?.toLowerCase().includes(query) ||
-      (sale.items && Array.isArray(sale.items) && sale.items.some((item) => item.productName?.toLowerCase().includes(query)))
+      (sale.items &&
+        Array.isArray(sale.items) &&
+        sale.items.some((item) =>
+          item.productName?.toLowerCase().includes(query)
+        ))
     )
   })
 
@@ -149,7 +182,10 @@ function SalesPage() {
     if (!confirm('Tem certeza que deseja cancelar esta venda?')) return
 
     try {
-      await cancelSale.mutateAsync({ id: sale.id, reason: 'Cancelado pelo usuário' })
+      await cancelSale.mutateAsync({
+        id: sale.id,
+        reason: 'Cancelado pelo usuário',
+      })
       toast.success('Venda cancelada com sucesso!')
     } catch (error) {
       console.error('Error canceling sale:', error)
@@ -165,12 +201,16 @@ function SalesPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Histórico de Vendas</h1>
-            <p className="text-gray-600 mt-1">Visualize e gerencie todas as vendas realizadas</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Histórico de Vendas
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Visualize e gerencie todas as vendas realizadas
+            </p>
           </div>
         </div>
 
@@ -206,7 +246,9 @@ function SalesPage() {
               <div className="text-center py-8">
                 <Receipt className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500">
-                  {searchQuery ? 'Nenhuma venda encontrada' : 'Nenhuma venda registrada'}
+                  {searchQuery
+                    ? 'Nenhuma venda encontrada'
+                    : 'Nenhuma venda registrada'}
                 </p>
               </div>
             ) : (
@@ -226,24 +268,42 @@ function SalesPage() {
                 <TableBody>
                   {filteredSales.map((sale) => (
                     <TableRow key={sale.id}>
-                      <TableCell className="font-medium">{sale.invoiceNumber}</TableCell>
+                      <TableCell className="font-medium">
+                        {sale.invoiceNumber}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1 text-sm">
                           <Calendar className="h-3 w-3 text-gray-400" />
                           {format(new Date(sale.createdAt), 'dd/MM/yyyy HH:mm')}
                         </div>
                       </TableCell>
-                      <TableCell>{sale.customer?.name || 'Cliente não identificado'}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{(sale.items?.length || 0)} itens</Badge>
+                        {sale.customer?.name || 'Cliente não identificado'}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{paymentMethodLabels[sale.paymentMethod]}</Badge>
+                        <Badge variant="secondary">
+                          {sale.items?.length || 0} itens
+                        </Badge>
                       </TableCell>
-                      <TableCell className="font-semibold">{sale.total.toFixed(2)} MT</TableCell>
                       <TableCell>
-                        <Badge variant={sale.status === 'completed' ? 'success' : 'destructive'}>
-                          {sale.status === 'completed' ? 'Concluída' : 'Cancelada'}
+                        <Badge variant="outline">
+                          {paymentMethodLabels[sale.paymentMethod]}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        {sale.total.toFixed(2)} MT
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            sale.status === 'completed'
+                              ? 'success'
+                              : 'destructive'
+                          }
+                        >
+                          {sale.status === 'completed'
+                            ? 'Concluída'
+                            : 'Cancelada'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -259,11 +319,19 @@ function SalesPage() {
                           >
                             <Printer className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleViewDetails(sale)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleViewDetails(sale)}
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
                           {sale.status === 'completed' && (
-                            <Button variant="ghost" size="icon" onClick={() => handleCancel(sale)}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleCancel(sale)}
+                            >
                               <X className="h-4 w-4 text-red-500" />
                             </Button>
                           )}
@@ -278,7 +346,11 @@ function SalesPage() {
         </Card>
 
         {/* Detail Modal */}
-        <SaleDetailModal sale={selectedSale} isOpen={isDetailOpen} onClose={() => setIsDetailOpen(false)} />
+        <SaleDetailModal
+          sale={selectedSale}
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+        />
 
         {/* Receipt Preview */}
         <ReceiptPreview

@@ -121,7 +121,33 @@ export async function saleRoutes(fastify: FastifyInstance) {
 	fastify.get('/daily-summary', { preHandler: authMiddleware }, async (request, reply) => {
 		try {
 			const { date } = request.query as { date?: string }
-			const summary = await saleService.getDailySummary(date ? Number(date) : Date.now())
+			let dateMs: number
+			
+			if (date) {
+				// Se for uma string de data (formato ISO ou YYYY-MM-DD), converte para timestamp
+				if (isNaN(Number(date))) {
+					// É uma string de data, precisa converter
+					const dateObj = new Date(date)
+					if (isNaN(dateObj.getTime())) {
+						// Data inválida, usa hoje
+						dateMs = Date.now()
+					} else {
+						dateMs = dateObj.getTime()
+					}
+				} else {
+					// É um número (timestamp)
+					const numDate = Number(date)
+					if (!isFinite(numDate)) {
+						dateMs = Date.now()
+					} else {
+						dateMs = numDate
+					}
+				}
+			} else {
+				dateMs = Date.now()
+			}
+			
+			const summary = await saleService.getDailySummary(dateMs)
 			return { success: true, data: summary }
 		} catch (err: unknown) {
 			logger.error('Error in GET /sales/daily-summary', err)

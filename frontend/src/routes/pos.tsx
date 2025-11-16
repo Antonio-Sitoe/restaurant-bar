@@ -44,9 +44,7 @@ function POSPage() {
   const createSale = useCreateSale()
 
   // Criar um mapa de produtos para acesso rápido
-  const productsMap = new Map(
-    (allProducts?.data || []).map((p) => [p.id, p])
-  )
+  const productsMap = new Map((allProducts?.data || []).map((p) => [p.id, p]))
 
   // Adicionar produto ao carrinho
   const addToCart = (product: any, quantity: number = 1) => {
@@ -161,28 +159,29 @@ function POSPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 pb-6">
         {/* Área de Produtos */}
-        <div className="lg:col-span-2 space-y-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Ponto de Venda
+        <div className="lg:col-span-2 space-y-6">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+            <h1 className="text-3xl font-bold mb-2">
+              🛒 Ponto de Venda
             </h1>
-            <p className="text-gray-600">
-              Busque e adicione produtos ao carrinho
+            <p className="text-blue-100">
+              Selecione produtos e finalize a venda rapidamente
             </p>
           </div>
 
           {/* Busca e Seleção de Cliente */}
-          <Card>
+          <Card className="shadow-md border-2">
             <CardContent className="pt-6">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block flex items-center gap-2">
-                    <User className="h-4 w-4" />
+                  <label className="text-sm font-semibold mb-2 flex items-center gap-2 text-gray-700">
+                    <User className="h-4 w-4 text-blue-500" />
                     Cliente{' '}
                     <span className="text-xs text-gray-500 font-normal">
-                      (opcional - pode vender sem cliente)
+                      (opcional)
                     </span>
                   </label>
                   <CustomerSelector
@@ -191,19 +190,20 @@ function POSPage() {
                   />
                 </div>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
-                    placeholder="Buscar produto por nome..."
+                    placeholder="🔍 Buscar produto por nome..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-12 text-base border-2 focus:border-blue-500"
                   />
                 </div>
                 <div className="relative">
                   <Input
-                    placeholder="Ou escaneie código de barras..."
+                    placeholder="📷 Ou escaneie código de barras..."
                     value={barcode}
                     onChange={(e) => handleBarcodeSearch(e.target.value)}
+                    className="h-12 text-base border-2 focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -212,56 +212,83 @@ function POSPage() {
 
           {/* Filtro de Categoria */}
           {!searchQuery && categories && categories.length > 0 && (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-wrap gap-2">
+            <div className="bg-white rounded-xl p-4 shadow-md border-2">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                📂 Categorias
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={
+                    selectedCategoryId === undefined ? 'default' : 'outline'
+                  }
+                  size="lg"
+                  onClick={() => setSelectedCategoryId(undefined)}
+                  className={
+                    selectedCategoryId === undefined
+                      ? 'bg-blue-600 hover:bg-blue-700'
+                      : ''
+                  }
+                >
+                  🏷️ Todas
+                </Button>
+                {categories.map((category) => (
                   <Button
+                    key={category.id}
                     variant={
-                      selectedCategoryId === undefined ? 'default' : 'outline'
+                      selectedCategoryId === category.id
+                        ? 'default'
+                        : 'outline'
                     }
-                    size="sm"
-                    onClick={() => setSelectedCategoryId(undefined)}
+                    size="lg"
+                    onClick={() => setSelectedCategoryId(category.id)}
+                    className={
+                      selectedCategoryId === category.id
+                        ? 'bg-purple-600 hover:bg-purple-700'
+                        : 'hover:bg-purple-50'
+                    }
                   >
-                    Todas
+                    {category.name}
                   </Button>
-                  {categories.map((category) => (
-                    <Button
-                      key={category.id}
-                      variant={
-                        selectedCategoryId === category.id
-                          ? 'default'
-                          : 'outline'
-                      }
-                      size="sm"
-                      onClick={() => setSelectedCategoryId(category.id)}
-                    >
-                      {category.name}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Lista de Produtos ou Grid */}
           {searchQuery && products && products.length > 0 ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Resultados da Busca</CardTitle>
+            <Card className="shadow-md border-2">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
+                <CardTitle className="text-xl font-bold text-gray-800">
+                  🔍 Resultados da Busca ({products.length})
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {products.slice(0, 12).map((product) => (
                     <button
                       key={product.id}
                       onClick={() => addToCart(product)}
-                      className="p-4 border rounded-lg hover:bg-gray-50 text-left transition-colors"
+                      className="group p-4 border-2 rounded-xl hover:border-blue-400 hover:shadow-lg text-left transition-all duration-200 hover:scale-105 relative overflow-hidden"
                     >
-                      <div className="font-medium text-sm">{product.name}</div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Estoque: {product.stockQuantity}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-blue-500 rounded-full p-1.5">
+                          <Plus className="h-3 w-3 text-white" />
+                        </div>
                       </div>
-                      <div className="text-lg font-bold text-blue-600 mt-2">
+                      <div className="font-semibold text-sm mb-2 line-clamp-2">
+                        {product.name}
+                      </div>
+                      <div className="text-xs text-gray-500 mb-2 flex items-center justify-between">
+                        <span>Estoque:</span>
+                        <span className={`font-semibold ${
+                          product.stockQuantity <= product.minStock
+                            ? 'text-red-600'
+                            : 'text-green-600'
+                        }`}>
+                          {product.stockQuantity}
+                        </span>
+                      </div>
+                      <div className="text-lg font-bold text-emerald-600 mt-2 pt-2 border-t">
                         {product.salePrice.toFixed(2)} MT
                       </div>
                     </button>
@@ -270,112 +297,148 @@ function POSPage() {
               </CardContent>
             </Card>
           ) : !searchQuery && allProducts && categories ? (
-            <Card>
-              <CardContent className="pt-6">
-                <ProductGrid
-                  products={allProducts}
-                  categories={categories}
-                  selectedCategoryId={selectedCategoryId}
-                  onProductClick={addToCart}
-                />
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-xl p-6 shadow-md border-2">
+              <ProductGrid
+                products={allProducts}
+                categories={categories}
+                selectedCategoryId={selectedCategoryId}
+                onProductClick={addToCart}
+              />
+            </div>
           ) : null}
         </div>
 
         {/* Carrinho */}
         <div className="lg:col-span-1">
-          <Card className="sticky top-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5" />
-                Carrinho
+          <Card className="sticky top-6 shadow-xl border-2 border-purple-200">
+            <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-lg">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <ShoppingCart className="h-6 w-6" />
+                  <span className="text-xl">Carrinho</span>
+                </div>
+                <div className="bg-white text-purple-600 rounded-full h-8 w-8 flex items-center justify-center font-bold text-sm">
+                  {cart.length}
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4">
               {/* Itens do Carrinho */}
-              <div className="space-y-2 max-h-64 overflow-y-auto">
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
                 {cart.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">
-                    Carrinho vazio
-                  </p>
+                  <div className="text-center py-12">
+                    <ShoppingCart className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-400 font-medium">
+                      Carrinho vazio
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Adicione produtos para começar
+                    </p>
+                  </div>
                 ) : (
-                  cart.map((item) => (
-                    <div
-                      key={item.productId}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">
-                          {item.productName}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {item.unitPrice.toFixed(2)} MT x {item.quantity}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 border rounded">
+                  cart.map((item) => {
+                    const product = productsMap.get(item.productId)
+                    return (
+                      <div
+                        key={item.productId}
+                        className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 border-2 border-purple-200 rounded-xl hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="font-semibold text-sm mb-1 text-gray-800">
+                              {item.productName}
+                            </div>
+                            <div className="text-xs text-gray-600 flex items-center gap-2">
+                              <span className="font-medium">
+                                {item.unitPrice.toFixed(2)} MT
+                              </span>
+                              <span className="text-gray-400">×</span>
+                              <span className="font-bold text-purple-600">
+                                {item.quantity}
+                              </span>
+                            </div>
+                            {product && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                Disponível: {product.stockQuantity}
+                              </div>
+                            )}
+                          </div>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6"
-                            onClick={() =>
-                              updateQuantity(item.productId, item.quantity - 1)
-                            }
+                            className="h-7 w-7 text-red-500 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => removeFromCart(item.productId)}
                           >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="px-2 text-sm">{item.quantity}</span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() =>
-                              updateQuantity(item.productId, item.quantity + 1)
-                            }
-                          >
-                            <Plus className="h-3 w-3" />
+                            <X className="h-4 w-4" />
                           </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-red-500"
-                          onClick={() => removeFromCart(item.productId)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 bg-white border-2 border-purple-300 rounded-lg">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                              onClick={() =>
+                                updateQuantity(item.productId, item.quantity - 1)
+                              }
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="px-3 text-base font-bold text-purple-700 min-w-[2rem] text-center">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-green-50 hover:text-green-600"
+                              onClick={() =>
+                                updateQuantity(item.productId, item.quantity + 1)
+                              }
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="text-lg font-bold text-emerald-600">
+                            {(item.unitPrice * item.quantity).toFixed(2)} MT
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    )
+                  })
                 )}
               </div>
 
               {/* Totais */}
               {cart.length > 0 && (
                 <>
-                  <div className="border-t pt-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Subtotal:</span>
-                      <span>{subtotal.toFixed(2)} MT</span>
+                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 space-y-3 border-2">
+                    <div className="flex justify-between text-base">
+                      <span className="text-gray-600">Subtotal:</span>
+                      <span className="font-semibold text-gray-800">
+                        {subtotal.toFixed(2)} MT
+                      </span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span>IVA (17%):</span>
-                      <span>{tax.toFixed(2)} MT</span>
+                    <div className="flex justify-between text-base">
+                      <span className="text-gray-600">IVA (17%):</span>
+                      <span className="font-semibold text-gray-800">
+                        {tax.toFixed(2)} MT
+                      </span>
                     </div>
-                    <div className="flex justify-between font-bold text-lg border-t pt-2">
-                      <span>Total:</span>
-                      <span>{total.toFixed(2)} MT</span>
+                    <div className="flex justify-between font-bold text-2xl border-t-2 pt-3">
+                      <span className="text-gray-800">Total:</span>
+                      <span className="text-emerald-600">
+                        {total.toFixed(2)} MT
+                      </span>
                     </div>
                   </div>
 
                   {/* Botão Finalizar */}
                   <Button
-                    className="w-full"
+                    className="w-full h-14 text-lg font-bold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all"
                     onClick={() => setIsPaymentModalOpen(true)}
                     disabled={cart.length === 0}
                   >
-                    Finalizar Venda
+                    💳 Finalizar Venda
                   </Button>
                 </>
               )}

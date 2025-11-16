@@ -31,7 +31,7 @@ function IconCardIcon({ children, className }: IconCardIconProps) {
   return (
     <div
       className={cn(
-        'flex items-center justify-center rounded-full bg-blue-400 text-white transition-transform duration-200 ease-out transform group-hover:scale-110',
+        'flex items-center justify-center rounded-full bg-purple-400 text-white transition-transform duration-200 ease-out transform group-hover:scale-110',
         'w-24 h-24 sm:w-28 sm:h-28 md:w-14 md:h-14 lg:w-20 lg:h-20 xl:w-24 xl:h-24',
         className
       )}

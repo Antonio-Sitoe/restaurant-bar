@@ -1,15 +1,13 @@
 import { eq } from 'drizzle-orm'
-import { getDb } from '../db/connection'
+import { db } from '../db/connection'
 import { settings, type Setting, type NewSetting } from '../db/schema/settings.schema'
 
 export const settingService = {
 	async getAll(): Promise<Setting[]> {
-		const db = getDb()
 		return await db.select().from(settings).all()
 	},
 
 	async get(key: string): Promise<Setting | null> {
-		const db = getDb()
 		return await db.select().from(settings).where(eq(settings.key, key)).get() ?? null
 	},
 
@@ -34,7 +32,6 @@ export const settingService = {
 	},
 
 	async set(key: string, value: string | number | boolean | object, options?: { type?: string; category?: string; description?: string }): Promise<Setting> {
-		const db = getDb()
 		const existing = await this.get(key)
 
 		const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value)
@@ -69,7 +66,6 @@ export const settingService = {
 	},
 
 	async update(key: string, updates: Partial<Pick<Setting, 'value' | 'type' | 'category' | 'description'>>): Promise<Setting> {
-		const db = getDb()
 		const result = await db
 			.update(settings)
 			.set({ ...updates, updatedAt: Date.now() })

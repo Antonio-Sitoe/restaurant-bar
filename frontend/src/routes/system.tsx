@@ -10,7 +10,14 @@ import {
 } from '@/hooks/useSystem'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Select } from '@/components/ui/select'
 import { Database, Download, Upload, FileText, AlertCircle } from 'lucide-react'
@@ -24,7 +31,10 @@ export const Route = createFileRoute('/system')({
 function SystemPage() {
   const [logLevel, setLogLevel] = useState<string>('')
   const { data: systemInfo } = useSystemInfo()
-  const { data: logs } = useSystemLogs({ level: logLevel || undefined, limit: 100 })
+  const { data: logs } = useSystemLogs({
+    level: logLevel || undefined,
+    limit: 100,
+  })
   const { data: backups } = useSystemBackups()
   const createBackup = useCreateBackup()
   const restoreBackup = useRestoreBackup()
@@ -42,7 +52,12 @@ function SystemPage() {
   }
 
   const handleRestoreBackup = async (backupId: string) => {
-    if (!confirm('ATENÇÃO: Esta ação irá restaurar o backup selecionado. Todos os dados atuais serão substituídos. Deseja continuar?')) return
+    if (
+      !confirm(
+        'ATENÇÃO: Esta ação irá restaurar o backup selecionado. Todos os dados atuais serão substituídos. Deseja continuar?'
+      )
+    )
+      return
 
     try {
       await restoreBackup.mutateAsync(backupId)
@@ -53,7 +68,10 @@ function SystemPage() {
     }
   }
 
-  const logLevelColors: Record<string, 'default' | 'destructive' | 'secondary'> = {
+  const logLevelColors: Record<
+    string,
+    'default' | 'destructive' | 'secondary'
+  > = {
     error: 'destructive',
     warn: 'default',
     info: 'secondary',
@@ -62,11 +80,13 @@ function SystemPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Sistema</h1>
-          <p className="text-gray-600 mt-1">Backup, restore e logs do sistema</p>
+          <p className="text-gray-600 mt-1">
+            Backup, restore e logs do sistema
+          </p>
         </div>
 
         {/* Informações do Sistema */}
@@ -79,16 +99,27 @@ function SystemPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Versão</p>
-                  <p className="font-semibold">{systemInfo.version || '1.0.0'}</p>
+                  <p className="font-semibold">
+                    {systemInfo.version || '1.0.0'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Banco de Dados</p>
-                  <p className="font-semibold">{systemInfo.database || 'SQLite'}</p>
+                  <p className="font-semibold">
+                    {systemInfo.database || 'SQLite'}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Última Atualização</p>
+                  <p className="text-sm text-gray-600 mb-1">
+                    Última Atualização
+                  </p>
                   <p className="font-semibold">
-                    {systemInfo.lastUpdate ? format(new Date(systemInfo.lastUpdate), 'dd/MM/yyyy HH:mm') : '-'}
+                    {systemInfo.lastUpdate
+                      ? format(
+                          new Date(systemInfo.lastUpdate),
+                          'dd/MM/yyyy HH:mm'
+                        )
+                      : '-'}
                   </p>
                 </div>
               </div>
@@ -106,12 +137,19 @@ function SystemPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button onClick={handleCreateBackup} disabled={createBackup.isPending} className="w-full">
+              <Button
+                onClick={handleCreateBackup}
+                disabled={createBackup.isPending}
+                className="w-full"
+              >
                 <Download className="h-4 w-4 mr-2" />
-                {createBackup.isPending ? 'Criando Backup...' : 'Criar Backup Agora'}
+                {createBackup.isPending
+                  ? 'Criando Backup...'
+                  : 'Criar Backup Agora'}
               </Button>
               <p className="text-sm text-gray-600">
-                Crie um backup completo do banco de dados. Recomenda-se fazer backups regularmente.
+                Crie um backup completo do banco de dados. Recomenda-se fazer
+                backups regularmente.
               </p>
             </CardContent>
           </Card>
@@ -132,9 +170,16 @@ function SystemPage() {
                       className="flex items-center justify-between p-3 border rounded-lg"
                     >
                       <div>
-                        <p className="font-medium text-sm">{backup.filename || backup.id}</p>
+                        <p className="font-medium text-sm">
+                          {backup.filename || backup.id}
+                        </p>
                         <p className="text-xs text-gray-500">
-                          {backup.createdAt ? format(new Date(backup.createdAt), 'dd/MM/yyyy HH:mm') : '-'}
+                          {backup.createdAt
+                            ? format(
+                                new Date(backup.createdAt),
+                                'dd/MM/yyyy HH:mm'
+                              )
+                            : '-'}
                         </p>
                       </div>
                       <Button
@@ -149,7 +194,9 @@ function SystemPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-center text-gray-500 py-4">Nenhum backup disponível</p>
+                <p className="text-center text-gray-500 py-4">
+                  Nenhum backup disponível
+                </p>
               )}
             </CardContent>
           </Card>
@@ -193,14 +240,23 @@ function SystemPage() {
                     {logs.map((log: any, index: number) => (
                       <TableRow key={index}>
                         <TableCell className="text-sm">
-                          {log.timestamp ? format(new Date(log.timestamp), 'dd/MM/yyyy HH:mm:ss') : '-'}
+                          {log.timestamp
+                            ? format(
+                                new Date(log.timestamp),
+                                'dd/MM/yyyy HH:mm:ss'
+                              )
+                            : '-'}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={logLevelColors[log.level] || 'secondary'}>
+                          <Badge
+                            variant={logLevelColors[log.level] || 'secondary'}
+                          >
                             {log.level?.toUpperCase() || 'INFO'}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm">{log.message || '-'}</TableCell>
+                        <TableCell className="text-sm">
+                          {log.message || '-'}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

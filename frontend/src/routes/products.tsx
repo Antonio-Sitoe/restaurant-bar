@@ -1,14 +1,32 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { MainLayout } from '@/components/layout/MainLayout'
-import { useProducts, useDeleteProduct, useCreateProduct, useUpdateProduct } from '@/hooks/useProducts'
+import {
+  useProducts,
+  useDeleteProduct,
+  useCreateProduct,
+  useUpdateProduct,
+} from '@/hooks/useProducts'
 import { ProductForm } from '@/components/products/ProductForm'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog'
 import { Plus, Search, Edit, Trash2, Package } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Product, CreateProductInput } from '@/types'
@@ -65,12 +83,14 @@ function ProductsPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="container space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Produtos</h1>
-            <p className="text-gray-600 mt-1">Gerencie seus produtos e estoque</p>
+            <p className="text-gray-600 mt-1">
+              Gerencie seus produtos e estoque
+            </p>
           </div>
           <Button onClick={handleCreate}>
             <Plus className="h-4 w-4 mr-2" />
@@ -129,16 +149,14 @@ function ProductsPage() {
                 <TableBody>
                   {products.map((product) => (
                     <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {product.name}
+                      </TableCell>
                       <TableCell>
                         {product.barcode || product.sku || '-'}
                       </TableCell>
-                      <TableCell>
-                        {product.category?.name || '-'}
-                      </TableCell>
-                      <TableCell>
-                        {product.salePrice.toFixed(2)} MT
-                      </TableCell>
+                      <TableCell>{product.category?.name || '-'}</TableCell>
+                      <TableCell>{product.salePrice.toFixed(2)} MT</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span>{product.stockQuantity}</span>
@@ -148,13 +166,19 @@ function ProductsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={product.isActive ? 'success' : 'secondary'}>
+                        <Badge
+                          variant={product.isActive ? 'success' : 'secondary'}
+                        >
                           {product.isActive ? 'Ativo' : 'Inativo'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(product)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(product)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
@@ -178,7 +202,9 @@ function ProductsPage() {
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingProduct ? 'Editar Produto' : 'Novo Produto'}</DialogTitle>
+              <DialogTitle>
+                {editingProduct ? 'Editar Produto' : 'Novo Produto'}
+              </DialogTitle>
               <DialogClose onClose={() => setIsFormOpen(false)} />
             </DialogHeader>
             <ProductForm
@@ -196,4 +222,3 @@ function ProductsPage() {
     </MainLayout>
   )
 }
-

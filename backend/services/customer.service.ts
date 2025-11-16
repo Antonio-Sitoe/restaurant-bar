@@ -1,5 +1,5 @@
 import { and, asc, eq, like, sql } from 'drizzle-orm'
-import { getDb } from '../db/connection'
+import { db } from '../db/connection'
 import { customers, type Customer, type NewCustomer } from '../db/schema/customers.schema'
 import { normalizePagination, type PaginatedResult, type PaginationParams } from '../utils/pagination.js'
 
@@ -10,7 +10,6 @@ export interface CustomerFilters extends PaginationParams {
 
 export const customerService = {
 	async getAll(filters?: CustomerFilters): Promise<PaginatedResult<Customer>> {
-		const db = getDb()
 		const where = []
 		if (filters?.query) {
 			const q = `%${filters.query}%`
@@ -55,12 +54,10 @@ export const customerService = {
 		}
 	},
 	async create(input: NewCustomer): Promise<Customer> {
-		const db = getDb()
 		const row = await db.insert(customers).values({ ...input, createdAt: Date.now(), updatedAt: Date.now() }).returning().get()
 		return row as Customer
 	},
 	async update(id: number, input: Partial<NewCustomer>): Promise<Customer> {
-		const db = getDb()
 		const row = await db
 			.update(customers)
 			.set({ ...input, updatedAt: Date.now() })
@@ -70,7 +67,6 @@ export const customerService = {
 		return row as Customer
 	},
 	async remove(id: number): Promise<void> {
-		const db = getDb()
 		await db.delete(customers).where(eq(customers.id, id)).run()
 	},
 }

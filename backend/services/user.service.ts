@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import { eq } from 'drizzle-orm'
-import { getDb } from '../db/connection'
+import { db } from '../db/connection'
 import { users, type User, type NewUser } from '../db/schema/users.schema'
 
 export interface LoginCredentials {
@@ -19,7 +19,6 @@ export interface CreateUserInput {
 
 export const userService = {
 	async login(credentials: LoginCredentials): Promise<User | null> {
-		const db = getDb()
 		// Try to find user by username or email
 		let user = await db.select().from(users).where(eq(users.username, credentials.username)).get()
 		
@@ -50,13 +49,11 @@ export const userService = {
 	},
 
 	async getAll(): Promise<User[]> {
-		const db = getDb()
 		const rows = await db.select().from(users).all()
 		return rows.map(({ passwordHash, ...user }) => user as User)
 	},
 
 	async getById(id: number): Promise<User | null> {
-		const db = getDb()
 		const user = await db.select().from(users).where(eq(users.id, id)).get()
 		if (!user) return null
 		const { passwordHash, ...userWithoutPassword } = user
@@ -64,7 +61,6 @@ export const userService = {
 	},
 
 	async create(input: CreateUserInput): Promise<User> {
-		const db = getDb()
 		const passwordHash = await bcrypt.hash(input.password, 12)
 
 		const newUser: NewUser = {
@@ -84,7 +80,6 @@ export const userService = {
 	},
 
 	async update(id: number, input: Partial<CreateUserInput>): Promise<User> {
-		const db = getDb()
 		const updateData: Partial<NewUser> = {}
 
 		if (input.fullName) updateData.fullName = input.fullName
@@ -101,7 +96,6 @@ export const userService = {
 	},
 
 	async delete(id: number): Promise<void> {
-		const db = getDb()
 		await db.update(users).set({ isActive: false }).where(eq(users.id, id)).run()
 	},
 }
