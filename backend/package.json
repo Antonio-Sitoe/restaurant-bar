@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx watch server.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "tsc && node scripts/fix-esm-extensions.cjs",
     "generate": "drizzle-kit generate --config=drizzle.config.mjs",
     "migrate": "drizzle-kit migrate --config=drizzle.config.mjs",
     "studio": "drizzle-kit studio --config=drizzle.config.mjs --port=3005"
